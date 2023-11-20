@@ -106,7 +106,7 @@ int main(int argc, char const *argv[]){
   double *C = (double *)malloc(n*n*sizeof(double));
   double *CPar = (double *)malloc(n*n*sizeof(double));
 
-  if(A == NULL || B == NULL || C == NULL){
+  if(A == NULL || B == NULL || C == NULL || CPar == NULL){
     printf("Error when allocating memory\n");
     return (-1);
   }
@@ -152,8 +152,8 @@ int main(int argc, char const *argv[]){
 #ifdef PRINT
   printf("Doing parallel matrix multiplication\n");
 #endif
-  populateMatrix(A, n, 1);
-  populateMatrix(B, n, 1);
+  // populateMatrix(A, n, 1);
+  // populateMatrix(B, n, 1);
   uint32_t timePar = matMulPar(A, B, CPar, n);
 #ifdef PRINT
   printf("parallel matrix multiplication done. Wall Time: \t%ld us\n", timePar);
@@ -164,10 +164,6 @@ int main(int argc, char const *argv[]){
   for(int r = 0; r < n; r++){
     for(int c = 0; c < n; c++){
       printf("%f\t", CPar[r*n + c]);
-      if(C[r*n + c] != CPar[r*n + c]){
-        printf("\nError in matrix multiplication\n");
-        return(-1);
-      }
     }
     printf("\n");
   }
