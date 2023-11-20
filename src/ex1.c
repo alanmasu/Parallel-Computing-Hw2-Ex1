@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
-// #include <linux/time.h>
+
+#include <omp.h>
 
 double randomD(int min, int max, int prec){ 
   prec = 10 * prec; 
@@ -34,4 +35,40 @@ uint32_t matMul(double* A, double* B, double* __restrict C, int n){
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
     return (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
+}
+
+uint32_t matMulPar(double* A, double* B, double* __restrict C, int n){ 
+#ifndef _OPENMP
+    int r, c, k;
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    for(r = 0; r < n; r++){
+        for(c = 0; c < n; c++){
+            double sum = 0;
+            for(k = 0; k < n; k++){
+                sum += A[r*n + k] * B[k*n + c];
+            }
+            C[r*n + c] = sum;
+        }
+    }
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    return (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
+#else 
+    #ifdef DEBUG
+        printf("Doing TRUE parallel matrix multiplication\n");
+    #endif
+    double start, end;
+    start = omp_get_wtime();
+    double sum = 0;
+    #pragma omp parallel for private (sum)
+    for(int r = 0; r < n; r++){
+        for(int c = 0; c < n; c++){
+            for(int k = 0; k < n; k++){
+                sum += A[r*n + k] * B[k*n + c];
+            }
+            C[r*n + c] = sum;
+        }
+    }
+    return (omp_get_wtime() - start)  * 1000000;
+#endif
 }
