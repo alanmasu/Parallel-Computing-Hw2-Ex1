@@ -8,11 +8,9 @@ infoFile = open('./results/infoFile.csv', 'r')
 info = infoFile.readline()
 infoarr = info.split(',')
 
-filename = './results/matTFile'
-img_filename = './results/matTImg'
+filename = './results/matMulFile'
+img_filename = './results/matMulImg'
 
-filename_block = './results/matBlockTFile'
-img_filename_block = './results/matBlockTImg'
 
 # Set the style
 sns.set_style("whitegrid")
@@ -20,10 +18,7 @@ sns.set_style("whitegrid")
 
 # Read the data
 df = pd.read_csv(filename + '.csv')
-df_block = pd.read_csv(filename_block + '.csv')
-# df['wall_clock_time_routine2'].replace(to_replace=0, value=0.0000001, inplace=True)
-# print(df)
-# print(df_block)
+print(df)
 
 # Filter the data
 def filter(row):
@@ -33,7 +28,7 @@ def filter(row):
         return 0
     return cores[1]
     
-df_strong = df[(df['compilation_notes'].str.contains('STRONG_SCALING')) & (df['matrix_size'] == 4096) & (df['run_notes']==infoarr[1])]
+df_strong = df[(df['compilation_notes'].str.contains('STRONG_SCALING')) & (df['matrix_size'] == 256) & (df['run_notes']==infoarr[1])]
 df_strong['cores'] = df_strong.apply(lambda row: filter(row), axis=1)
 
 print('df_strong',df_strong)
@@ -46,8 +41,8 @@ print('df_strong',df_strong)
 
 ########### Normal Transpose ###########
 # # Create a scatter plot
-sns.lineplot(x=df_strong['cores'].astype(str), y='matT_wallTime[us]', data=df_strong, color='red', label='Serial')
-sns.lineplot(x=df_strong['cores'].astype(str), y='matTpar_wallTime[us]', data=df_strong, color='blue', label='Parallel')
+sns.lineplot(x=df_strong['cores'].astype(str), y='matMul_wallTime[us]', data=df_strong, color='red', label='Serial')
+sns.lineplot(x=df_strong['cores'].astype(str), y='matMulPar_wallTime[us]', data=df_strong, color='blue', label='Parallel')
 
 # # # Add title and axis names
 plt.title('Strong scaling')

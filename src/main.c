@@ -112,11 +112,8 @@ int main(int argc, char const *argv[]){
   }
 
   //Populate matrices
-  for(int i = 0; i < n*n; i++){
-    A[i] = i;
-    B[i] = i;
-  }
-
+  populateMatrix(A, n, 3);
+  populateMatrix(B, n, 3);
 
 #ifdef DEBUG
   //Print matrices
@@ -152,8 +149,8 @@ int main(int argc, char const *argv[]){
 #ifdef PRINT
   printf("Doing parallel matrix multiplication\n");
 #endif
-  // populateMatrix(A, n, 1);
-  // populateMatrix(B, n, 1);
+  populateMatrix(A, n, 1);
+  populateMatrix(B, n, 1);
   uint32_t timePar = matMulPar(A, B, CPar, n);
 #ifdef PRINT
   printf("parallel matrix multiplication done. Wall Time: \t%ld us\n", timePar);
