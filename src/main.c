@@ -43,8 +43,8 @@
     #define COMPILATION_NOTES ""
 #endif
 
-#define RUN_NOTES "serial"
-#define RUN_DESCRIPTION "Serial matrix multiplication"
+#define RUN_NOTES "omp-for"
+#define RUN_DESCRIPTION "Parallel matrix multiplication"
 
 int main(int argc, char const *argv[]){
   char hostbuffer[256] = "";
@@ -104,8 +104,9 @@ int main(int argc, char const *argv[]){
   double *A = (double *)malloc(n*n*sizeof(double));
   double *B = (double *)malloc(n*n*sizeof(double));
   double *C = (double *)malloc(n*n*sizeof(double));
+  double *CPar = (double *)malloc(n*n*sizeof(double));
 
-  if(A == NULL || B == NULL || C == NULL){
+  if(A == NULL || B == NULL || C == NULL || CPar == NULL){
     printf("Error when allocating memory\n");
     return (-1);
   }
@@ -148,19 +149,28 @@ int main(int argc, char const *argv[]){
 #endif
 
   //Execution of the parallel matrix multiplication
-// #ifdef PRINT
-//   printf("Doing parallel matrix multiplication\n");
-// #endif
-//   populateMatrix(A, n, 1);
-//   uint32_t timePar = matTpar(A, B, n);
-// #ifdef PRINT
-//   printf("parallel matrix multiplication done. Wall Time: \t%ld us\n", timePar);
-// #endif
+#ifdef PRINT
+  printf("Doing parallel matrix multiplication\n");
+#endif
+  // populateMatrix(A, n, 1);
+  // populateMatrix(B, n, 1);
+  uint32_t timePar = matMulPar(A, B, CPar, n);
+#ifdef PRINT
+  printf("parallel matrix multiplication done. Wall Time: \t%ld us\n", timePar);
+#endif
 
+#ifdef DEBUG
+  //Print result matrix
+  for(int r = 0; r < n; r++){
+    for(int c = 0; c < n; c++){
+      printf("%f\t", CPar[r*n + c]);
+    }
+    printf("\n");
+  }
+#endif
 
   //Exporting results
-  fprintf(matMulFile, "%d,%ld,%ld,%s,%s,%s\n", n, time, 0, hostbuffer, COMPILATION_NOTES, RUN_NOTES);
-  // fprintf(matMulFile, "%d,%ld,%ld,%s,%s\n", n, time, timePar, hostbuffer, COMPILATION_NOTES);
+  fprintf(matMulFile, "%d,%ld,%ld,%s,%s,%s\n", n, time, timePar, hostbuffer, COMPILATION_NOTES, RUN_NOTES);
 
   //Closing results files
   fclose(matMulFile);
@@ -169,4 +179,5 @@ int main(int argc, char const *argv[]){
   free(A);
   free(B);
   free(C);
+  free(CPar);
 }
