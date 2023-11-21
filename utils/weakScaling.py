@@ -4,13 +4,21 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-infoFile = open('./results/infoFile.csv', 'r')
+import create_run_folder as crf
+
+## Create the run folder
+runDir = crf.createFolder()
+if 'error' in runDir :
+    print('Error on create run folder')
+    runDir = './results'
+
+filename = runDir + '/matMulFile'
+img_filename = runDir + '/matMulImg'
+infoFileName = runDir + '/infoFile.csv'
+
+infoFile = open(infoFileName, 'r')
 info = infoFile.readline()
 infoarr = info.split(',')
-
-filename = './results/matMulFile'
-img_filename = './results/matMulImg'
-
 
 # Set the style
 sns.set_style("whitegrid")

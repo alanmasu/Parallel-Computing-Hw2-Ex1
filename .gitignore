@@ -6,3 +6,4 @@
 *.exe
 *.png
 graphEnv
+__pycache__
