@@ -10,5 +10,5 @@ do
 done
 
 source graphEnv/bin/activate
-python3 ./src/pytonCharts.py
+python3 ./utils/chart.py
 deactivate
